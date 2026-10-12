@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>emejota® — Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg: #f7f5ef;
+      --ink: #171717;
+      --red: #f0442f;
+      --line: #d8d5cc;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 15px/1.5 Arial, Helvetica, sans-serif;
+    }
+
+    header {
+      padding: 22px 5%;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+    }
+
+    main {
+      max-width: 1050px;
+      margin: auto;
+      padding: 35px 5% 70px;
+    }
+
+    h1 {
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+
+    h2 { font-size: 20px; }
+
+    .muted {
+      color: #696969;
+      font-size: 13px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--line);
+      padding: 22px;
+      margin: 20px 0;
+      border-radius: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      margin: 14px 0 5px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 5px;
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    button {
+      border: 0;
+      padding: 12px 17px;
+      background: var(--ink);
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      font: inherit;
+      margin-top: 12px;
+    }
+
+    button:hover { opacity: .8; }
+
+    button.red { background: var(--red); }
+
+    button.light {
+      background: #e9e6df;
+      color: var(--ink);
+    }
+
+    button:disabled {
+      opacity: .5;
+      cursor: wait;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .row > * {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .product {
+      display: grid;
+      grid-template-columns: 95px 1fr auto;
+      align-items: center;
+      gap: 15px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .product img {
+      width: 95px;
+      height: 95px;
+      object-fit: cover;
+      background: #eee;
+    }
+
+    .product strong { display: block; }
+
+    .product-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .product-actions button {
+      margin: 3px 0;
+      padding: 8px 10px;
+      font-size: 12px;
+    }
+
+    #status {
+      white-space: pre-wrap;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 600px) {
+      .row {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .product {
+        grid-template-columns: 70px 1fr;
+        gap: 10px;
+      }
+
+      .product img {
+        width: 70px;
+        height: 80px;
+      }
+
+      .product-actions {
+        grid-column: 2;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo">emejota®</div>
+    <button
+      id="logout"
+      class="light hidden"
+      onclick="logout()"
+    >cerrar sesión</button>
+  </header>
+
+  <main>
+    <section id="login">
+      <p class="muted">PANEL PRIVADO / 001</p>
+      <h1>tu tienda,<br>tus reglas.</h1>
+      <p>entra para administrar tus obras y productos.</p>
+
+      <div class="card">
+        <form id="loginForm">
+          <label for="email">email</label>
+          <input
+            id="email"
+            type="email"
+            autocomplete="username"
+            required
+          >
+
+          <label for="password">contraseña</label>
+          <input
+            id="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          >
+
+          <button type="submit">entrar →</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="dashboard" class="hidden">
+      <p class="muted">PANEL DE CONTROL / EMEJOTA®</p>
+      <h1>administra<br>tus obras.</h1>
+      <p class="muted">
+        añade productos, cambia precios y controla tu inventario.
+      </p>
+
+      <div class="card">
+        <h2 id="formTitle">+ añadir producto</h2>
+
+        <form id="productForm">
+          <input id="productId" type="hidden">
+
+          <label for="title">nombre de la obra / producto *</label>
+          <input
+            id="title"
+            required
+            maxlength="180"
+            placeholder="ej. estudio de una luna"
+          >
+
+          <label for="description">descripción</label>
+          <textarea
+            id="description"
+            placeholder="cuéntame sobre esta pieza..."
+          ></textarea>
+
+          <div class="row">
+            <div>
+              <label for="price">precio (RD$) *</label>
+              <input
+                id="price"
+                type="number"
+                min="0"
+                step="0.01"
+                required
+              >
+            </div>
+
+            <div>
+              <label for="stock">unidades disponibles *</label>
+              <input
+                id="stock"
+                type="number"
+                min="0"
+                step="1"
+                required
+                value="1"
+              >
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="category">categoría</label>
+              <select id="category">
+                <option value="prints">prints</option>
+                <option value="originals">originales</option>
+                <option value="collages">collages</option>
+                <option value="illustration">ilustración</option>
+                <option value="objects">objetos</option>
+                <option value="other">otros</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="image">foto del producto</label>
+              <input
+                id="image"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+              >
+            </div>
+          </div>
+
+          <p class="muted">
+            formatos JPG, PNG o WEBP · máximo 5 MB.
+          </p>
+
+          <label>
+            <input
+              id="published"
+              type="checkbox"
+              style="width:auto"
+            >
+            publicar en la tienda
+          </label>
+
+          <button id="saveButton" type="submit">
+            guardar producto
+          </button>
+
+          <button
+            type="button"
+            id="cancelEdit"
+            class="light hidden"
+            onclick="resetForm()"
+          >cancelar edición</button>
+        </form>
+
+        <div id="status" role="status"></div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="align-items:center">
+          <div><h2>tu catálogo</h2></div>
+          <div style="text-align:right">
+            <button
+              type="button"
+              class="light"
+              onclick="loadProducts()"
+            >↻ actualizar</button>
+          </div>
+        </div>
+
+        <div id="productList">cargando productos...</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // REEMPLAZA ESTOS DOS VALORES CON LOS DE SUPABASE.
+    const https://hdehwxlwvafnbthosabl.supabase.co/rest/v1/";
+    const sb_publishable_vbdPL00ZnIYMrHXQlVAvrg_KupjLMrc";
+
+    const db = supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    const $ = id => document.getElementById(id);
+
+    function status(message, error = false) {
+      $("status").textContent = message;
+      $("status").style.color = error ? "#c62828" : "#267347";
+    }
+
+    function money(value) {
+      return "RD$ " + Number(value).toLocaleString("es-DO", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    async function showSession() {
+      const { data, error } = await db.auth.getSession();
+
+      if (error) {
+        alert("No se pudo verificar la sesión. Recarga la página.");
+        return;
+      }
+
+      const session = data.session;
+
+      $("login").classList.toggle("hidden", !!session);
+      $("dashboard").classList.toggle("hidden", !session);
+      $("logout").classList.toggle("hidden", !session);
+
+      if (session) await loadProducts();
+    }
+
+    $("loginForm").addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const button = event.submitter;
+      button.disabled = true;
+      button.textContent = "entrando...";
+
+      const { error } = await db.auth.signInWithPassword({
+        email: $("email").value.trim(),
+        password: $("password").value
+      });
+
+      button.disabled = false;
+      button.textContent = "entrar →";
+
+      if (error) {
+        alert("No se pudo iniciar sesión. Revisa el email y la contraseña.");
+        return;
+      }
+
+      $("password").value = "";
+      await showSession();
+    });
+
+    async function logout() {
+      const { error } = await db.auth.signOut();
+
+      if (error) {
+        alert("No se pudo cerrar la sesión.");
+        return;
+      }
+
+      resetForm();
+      await showSession();
+    }
+
+    async function loadProducts() {
+      $("productList").textContent = "cargando...";
+
+      const { data, error } = await db
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        $("productList").textContent =
+          "No se pudieron cargar los productos: " + error.message;
+        return;
+      }
+
+      if (!data.length) {
+        $("productList").textContent =
+          "todavía no hay productos. ¡añade el primero arriba!";
+        return;
+      }
+
+      $("productList").replaceChildren();
+
+      data.forEach(product => {
+        const item = document.createElement("div");
+        item.className = "product";
+
+        const img = document.createElement("img");
+        img.alt = product.title;
+        img.loading = "lazy";
+
+        if (product.image_url) {
+          img.src = product.image_url;
+        }
+
+        const info = document.createElement("div");
+
+        const name = document.createElement("strong");
+        name.textContent = product.title;
+
+        const details = document.createElement("div");
+        details.className = "muted";
+        details.textContent =
+          money(product.price) +
+          " · stock: " + product.stock +
+          " · " +
+          (product.is_published ? "publicado" : "borrador");
+
+        info.append(name, details);
+
+        const actions = document.createElement("div");
+        actions.className = "product-actions";
+
+        const edit = document.createElement("button");
+        edit.textContent = "editar";
+        edit.onclick = () => editProduct(product);
+
+        const toggle = document.createElement("button");
+        toggle.className = "light";
+        toggle.textContent =
+          product.is_published ? "ocultar" : "publicar";
+        toggle.onclick = () => togglePublished(product);
+
+        const remove = document.createElement("button");
+        remove.className = "red";
+        remove.textContent = "borrar";
+        remove.onclick = () => deleteProduct(product);
+
+        actions.append(edit, toggle, remove);
+        item.append(img, info, actions);
+        $("productList").append(item);
+      });
+    }
+
+    function editProduct(product) {
+      $("productId").value = product.id;
+      $("title").value = product.title;
+      $("description").value = product.description || "";
+      $("price").value = product.price;
+      $("stock").value = product.stock;
+      $("category").value = product.category || "prints";
+      $("published").checked = product.is_published;
+      $("image").value = "";
+
+      $("formTitle").textContent = "editar producto";
+      $("saveButton").textContent = "guardar cambios";
+      $("cancelEdit").classList.remove("hidden");
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function resetForm() {
+      $("productForm").reset();
+      $("productId").value = "";
+      $("stock").value = 1;
+
+      $("formTitle").textContent = "+ añadir producto";
+      $("saveButton").textContent = "guardar producto";
+      $("cancelEdit").classList.add("hidden");
+
+      status("");
+    }
+
+    async function uploadImage(file) {
+      if (!file) return null;
+
+      const allowed = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ];
+
+      if (!allowed.includes(file.type)) {
+        throw new Error("Usa una imagen JPG, PNG o WEBP.");
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error("La imagen debe pesar menos de 5 MB.");
+      }
+
+      const ext = file.type === "image/png"
+        ? "png"
+        : file.type === "image/webp"
+          ? "webp"
+          : "jpg";
+
+      const path =
+        Date.now() + "-" + crypto.randomUUID() + "." + ext;
+
+      const { error } = await db.storage
+        .from("product-images")
+        .upload(path, file, {
+          contentType: file.type,
+          upsert: false
+        });
+
+      if (error) throw error;
+
+      const { data } = db.storage
+        .from("product-images")
+        .getPublicUrl(path);
+
+      return data.publicUrl;
+    }
+
+    $("productForm").addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const button = $("saveButton");
+      button.disabled = true;
+      status("guardando producto...");
+
+      try {
+        const id = $("productId").value;
+        const file = $("image").files[0];
+
+        let imageUrl = null;
+
+        if (file) {
+          imageUrl = await uploadImage(file);
+        } else if (!id) {
+          throw new Error("Sube una foto para el nuevo producto.");
+        }
+
+        const product = {
+          title: $("title").value.trim(),
+          description: $("description").value.trim(),
+          price: Number($("price").value),
+          stock: Number($("stock").value),
+          category: $("category").value,
+          is_published: $("published").checked,
+          updated_at: new Date().toISOString()
+        };
+
+        if (imageUrl) {
+          product.image_url = imageUrl;
+        }
+
+        const result = id
+          ? await db.from("products").update(product).eq("id", id)
+          : await db.from("products").insert(product);
+
+        if (result.error) throw result.error;
+
+        status("¡producto guardado!");
+        resetForm();
+        await loadProducts();
+
+      } catch (error) {
+        status("No se pudo guardar: " + error.message, true);
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    async function togglePublished(product) {
+      const { error } = await db
+        .from("products")
+        .update({
+          is_published: !product.is_published,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", product.id);
+
+      if (error) {
+        alert("No se pudo actualizar: " + error.message);
+        return;
+      }
+
+      await loadProducts();
+    }
+
+    async function deleteProduct(product) {
+      const confirmed = confirm(
+        '¿Seguro que quieres borrar "' + product.title + '"?'
+      );
+
+      if (!confirmed) return;
+
+      const { error } = await db
+        .from("products")
+        .delete()
+        .eq("id", product.id);
+
+      if (error) {
+        alert("No se pudo borrar: " + error.message);
+        return;
+      }
+
+      await loadProducts();
+    }
+
+    db.auth.onAuthStateChange(() => {
+      showSession();
+    });
+
+    showSession();
+  </script>
+</body>
+</html>
