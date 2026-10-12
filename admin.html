@@ -341,15 +341,10 @@
   </main>
 
   <script>
-    // REEMPLAZA ESTOS DOS VALORES CON LOS DE SUPABASE.
-    const https://hdehwxlwvafnbthosabl.supabase.co/rest/v1/";
-    const sb_publishable_vbdPL00ZnIYMrHXQlVAvrg_KupjLMrc";
+const SUPABASE_URL = "https://hdehwxlwvafnbthosabl.supabase.co";
+const SUPABASE_KEY = "sb_publishable_vbdPL00ZnIYMrHXQlVAvrg_KupjLMrc";
 
-    const db = supabase.createClient(
-      https://hdehwxlwvafnbthosabl.supabase.co/rest/v1/,
-      sb_publishable_vbdPL00ZnIYMrHXQlVAvrg_KupjLMrc
-    );
-
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     const $ = id => document.getElementById(id);
 
     function status(message, error = false) {
