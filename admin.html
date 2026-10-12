@@ -648,10 +648,12 @@
       await loadProducts();
     }
 
-    db.auth.onAuthStateChange(() => {
-      showSession();
-    });
-
+db.auth.onAuthStateChange((event, session) => {
+  $("login").classList.toggle("hidden", !!session);
+  $("dashboard").classList.toggle("hidden", !session);
+  $("logout").classList.toggle("hidden", !session);
+});
+  
     showSession();
   </script>
 </body>
