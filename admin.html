@@ -397,7 +397,7 @@
       button.textContent = "entrar →";
 
       if (error) {
-        alert("No se pudo iniciar sesión. Revisa el email y la contraseña.");
+        alert("ERROR:"+error.message);
         return;
       }
 
