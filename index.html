@@ -130,19 +130,12 @@
     }
 
     .marquee-word {
-      padding: 0 22px;
+      padding: 0 30px;
       font-size: clamp(60px, 11.5vw, 158px);
       line-height: 0.95;
       letter-spacing: -0.095em;
       font-weight: 700;
       white-space: nowrap;
-    }
-
-    .marquee-star {
-      color: var(--red);
-      font-size: clamp(28px, 5vw, 65px);
-      padding: 0 8px;
-      transform: rotate(-12deg);
     }
 
     @keyframes marquee-scroll {
@@ -502,7 +495,7 @@
       }
 
       .marquee-word {
-        padding: 0 15px;
+        padding: 0 30px;
       }
     }
 
@@ -542,11 +535,7 @@
 
       .marquee-word {
         font-size: 18vw;
-        padding: 0 12px;
-      }
-
-      .marquee-star {
-        font-size: 8vw;
+        padding: 0 30px;
       }
 
       .studio-descriptor {
@@ -630,29 +619,21 @@
     </nav>
   </header>
 
-  <!-- MOVING EMEJOTA MARQUEE -->
+  <!-- MOVING EMEJOTA MARQUEE: NO ASTERISKS -->
   <div class="marquee" aria-label="EMEJOTA">
     <div class="marquee-track">
       <div class="marquee-group" aria-hidden="true">
         <span class="marquee-word">EMEJOTA</span>
-        <span class="marquee-star">✳</span>
         <span class="marquee-word">EMEJOTA</span>
-        <span class="marquee-star">✳</span>
         <span class="marquee-word">EMEJOTA</span>
-        <span class="marquee-star">✳</span>
         <span class="marquee-word">EMEJOTA</span>
-        <span class="marquee-star">✳</span>
       </div>
 
       <div class="marquee-group" aria-hidden="true">
         <span class="marquee-word">EMEJOTA</span>
-        <span class="marquee-star">✳</span>
         <span class="marquee-word">EMEJOTA</span>
-        <span class="marquee-star">✳</span>
         <span class="marquee-word">EMEJOTA</span>
-        <span class="marquee-star">✳</span>
         <span class="marquee-word">EMEJOTA</span>
-        <span class="marquee-star">✳</span>
       </div>
     </div>
   </div>
@@ -819,7 +800,7 @@
       }).format(amount);
     }
 
-    // Create elements safely without injecting product text as HTML.
+    // Create product cards safely.
     function createProductCard(product) {
       const card = document.createElement("article");
       card.className = "product-card";
@@ -893,9 +874,7 @@
       modalImage.src = product.image_url;
       modalImage.alt = product.title || "EMEJOTA artwork";
       modalTitle.textContent = product.title || "Untitled";
-
-      const formattedPrice = formatPrice(product.price);
-      modalPrice.textContent = formattedPrice;
+      modalPrice.textContent = formatPrice(product.price);
 
       imageModal.classList.add("is-open");
       imageModal.setAttribute("aria-hidden", "false");
@@ -923,7 +902,7 @@
 
     modalClose.addEventListener("click", closeImageModal);
 
-    // Clicking the backdrop closes the image; clicking the image doesn't.
+    // Clicking the backdrop closes the image.
     imageModal.addEventListener("click", (event) => {
       if (event.target === imageModal) {
         closeImageModal();
@@ -966,7 +945,8 @@
 
         const products = shuffleArray(
           (data || []).filter(
-            (product) => product.image_url && product.image_url.trim() !== ""
+            (product) =>
+              product.image_url && product.image_url.trim() !== ""
           )
         );
 
