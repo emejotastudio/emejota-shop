@@ -4,12 +4,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EMEJOTA Studio</title>
-  <meta name="description" content="EMEJOTA — Your local dealer." />
+  <meta name="theme-color" content="#f5f2eb" />
+  <meta name="description" content="EMEJOTA Studio — Your local dealer." />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>EMEJOTA Studio — Your local dealer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
 
   <style>
     :root {
@@ -17,7 +22,9 @@
       --ink: #171714;
       --red: #ed432f;
       --muted: #858178;
-      --line: rgba(23, 23, 20, 0.18);
+      --line: rgba(23, 23, 20, 0.2);
+      --mono: "DM Mono", monospace;
+      --sans: "Space Grotesk", sans-serif;
     }
 
     * {
@@ -26,13 +33,19 @@
 
     html {
       scroll-behavior: smooth;
+      scroll-padding-top: 85px;
     }
 
     body {
       margin: 0;
       background: var(--paper);
       color: var(--ink);
-      font-family: "Space Grotesk", sans-serif;
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body.modal-open {
+      overflow: hidden;
     }
 
     a {
@@ -44,163 +57,171 @@
       font: inherit;
     }
 
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--red);
+      outline-offset: 4px;
+    }
+
+    /* HEADER */
+
     .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      display: flex;
+      min-height: 58px;
+      padding: 0 4%;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      padding: 18px 4vw;
-      background: var(--paper);
+      gap: 20px;
       border-bottom: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
-    .nav-group {
+    .nav-left,
+    .nav-right {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 20px;
     }
 
-    .nav-link,
-    .brand-tagline,
-    .section-label,
-    .product-price,
-    .footer-note {
-      font-family: "DM Mono", monospace;
-      font-size: 11px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+    .nav-right {
+      justify-content: flex-end;
     }
 
     .nav-link {
-      border: 0;
-      background: transparent;
-      padding: 0;
-      cursor: pointer;
+      transition: color 0.2s ease;
     }
 
     .nav-link:hover {
       color: var(--red);
     }
 
-    .brand {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
+    .dealer-label {
+      color: var(--red);
       white-space: nowrap;
+      text-align: center;
     }
 
-    .brand-tagline {
+    .cart-count {
       color: var(--red);
-      font-size: 10px;
-      font-weight: 400;
     }
+
+    /* MOVING MARQUEE */
 
     .marquee {
       overflow: hidden;
       width: 100%;
-      padding: 25px 0 22px;
-      border-bottom: 1px solid var(--line);
+      padding: 21px 0 12px;
     }
 
     .marquee-track {
       display: flex;
       width: max-content;
-      animation: roll 32s linear infinite;
+      animation: marquee-scroll 32s linear infinite;
+      will-change: transform;
+    }
+
+    .marquee-group {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+    }
+
+    .marquee-word {
+      padding: 0 22px;
+      font-size: clamp(60px, 11.5vw, 158px);
+      line-height: 0.95;
+      letter-spacing: -0.095em;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .marquee-star {
+      color: var(--red);
+      font-size: clamp(28px, 5vw, 65px);
+      padding: 0 8px;
+      transform: rotate(-12deg);
+    }
+
+    @keyframes marquee-scroll {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
     }
 
     .marquee:hover .marquee-track {
       animation-play-state: paused;
     }
 
-    .marquee-word {
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      padding-right: 28px;
-      font-size: clamp(60px, 12vw, 160px);
-      line-height: 0.9;
-      font-weight: 700;
-      letter-spacing: -0.095em;
-      white-space: nowrap;
-    }
-
-    .marquee-star {
-      color: var(--red);
-      font-size: 0.45em;
-      letter-spacing: 0;
-    }
-
-    @keyframes roll {
-      from {
-        transform: translateX(0);
-      }
-      to {
-        transform: translateX(-50%);
-      }
-    }
-
-    .intro {
-      padding: 22px 4vw 36px;
+    .studio-descriptor {
       text-align: center;
+      padding: 22px 16px 42px;
+      font-family: var(--mono);
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.07em;
     }
 
-    .intro h1 {
-      margin: 0;
-      font-family: "DM Mono", monospace;
-      font-size: 11px;
-      font-weight: 400;
-      letter-spacing: 0.06em;
-      line-height: 1.5;
-      text-transform: uppercase;
-    }
+    /* SECTION HEADINGS */
 
     .section {
-      padding: 0 4vw 70px;
-      scroll-margin-top: 100px;
+      padding: 0 4% 80px;
+      scroll-margin-top: 75px;
     }
 
     .section-heading {
       display: flex;
-      align-items: baseline;
       justify-content: space-between;
+      align-items: baseline;
       gap: 16px;
-      padding: 0 0 14px;
       border-bottom: 1px solid var(--ink);
-      margin-bottom: 22px;
+      padding-bottom: 12px;
+      margin-bottom: 24px;
     }
 
+    .section-heading h1,
     .section-heading h2 {
-      margin: 0;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 500;
-      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      margin: 0;
+      letter-spacing: 0.02em;
     }
 
-    .section-heading span {
-      font-family: "DM Mono", monospace;
-      color: var(--muted);
+    .section-note {
+      font-family: var(--mono);
       font-size: 10px;
-      text-transform: uppercase;
+      color: var(--muted);
+      text-align: right;
     }
+
+    /* PRODUCT GALLERY */
 
     .product-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 34px 16px;
+      gap: 38px 16px;
     }
 
     .product-card {
       min-width: 0;
     }
 
-    .product-image-wrap {
-      position: relative;
+    .product-image-button {
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: #eae6dd;
+      cursor: zoom-in;
       overflow: hidden;
-      background: #e9e5dc;
+      position: relative;
       aspect-ratio: 4 / 5;
     }
 
@@ -209,310 +230,571 @@
       height: 100%;
       display: block;
       object-fit: cover;
-      transition: transform 0.5s ease;
+      transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
     }
 
-    .product-card:hover .product-image {
+    .product-image-button:hover .product-image {
       transform: scale(1.035);
     }
 
+    .zoom-hint {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      background: var(--paper);
+      color: var(--ink);
+      padding: 7px 9px;
+      font-family: var(--mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .product-image-button:hover .zoom-hint,
+    .product-image-button:focus-visible .zoom-hint {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .product-info {
+      padding-top: 12px;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 12px;
-      padding-top: 11px;
     }
 
     .product-title {
       margin: 0;
-      font-size: 14px;
+      font-size: 12px;
+      line-height: 1.4;
       font-weight: 500;
+      overflow-wrap: anywhere;
     }
 
     .product-description {
       margin: 5px 0 0;
-      max-width: 340px;
-      color: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
       line-height: 1.5;
+      color: var(--muted);
+      white-space: pre-line;
     }
 
     .product-price {
       flex-shrink: 0;
+      font-family: var(--mono);
+      font-size: 10px;
       white-space: nowrap;
     }
 
-    .empty-state,
-    .loading-state {
-      padding: 55px 0;
-      font-family: "DM Mono", monospace;
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 70px 15px;
+      text-align: center;
+      color: var(--muted);
       font-size: 12px;
       line-height: 1.7;
-      color: var(--muted);
-      text-transform: uppercase;
     }
 
-    .collection-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .collection-card {
+    .empty-state strong {
+      color: var(--ink);
       display: block;
-      padding: 26px;
-      min-height: 180px;
-      border: 1px solid var(--line);
-      transition: background 0.2s ease, color 0.2s ease;
-    }
-
-    .collection-card:hover {
-      background: var(--ink);
-      color: var(--paper);
-    }
-
-    .collection-card h3 {
-      margin: 0 0 10px;
-      font-size: clamp(24px, 4vw, 44px);
-      letter-spacing: -0.06em;
-      font-weight: 500;
-    }
-
-    .collection-card p {
-      margin: 0;
-      font-family: "DM Mono", monospace;
-      font-size: 10px;
-      text-transform: uppercase;
-    }
-
-    .simple-section {
-      padding: 38px 4vw;
-      border-top: 1px solid var(--line);
-      scroll-margin-top: 100px;
-    }
-
-    .simple-section h2 {
-      margin: 0 0 12px;
       font-size: 13px;
       font-weight: 500;
-      text-transform: uppercase;
+      margin-bottom: 8px;
     }
 
-    .simple-section p {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.7;
-      max-width: 520px;
+    /* COLLECTIONS */
+
+    .placeholder-section {
+      border-top: 1px solid var(--line);
+      padding-top: 24px;
     }
 
-    footer {
+    .placeholder-copy {
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: clamp(22px, 4vw, 42px);
+      line-height: 1.15;
+      letter-spacing: -0.055em;
+      max-width: 750px;
+      margin: 0 auto;
+    }
+
+    .about-copy {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 15px 0 35px;
+      font-size: clamp(22px, 4vw, 38px);
+      line-height: 1.2;
+      letter-spacing: -0.05em;
+    }
+
+    .contact-link {
+      color: var(--red);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* CART PLACEHOLDER */
+
+    .cart-placeholder {
+      padding: 30px 0;
+      font-size: 13px;
+    }
+
+    /* FOOTER */
+
+    .footer {
+      border-top: 1px solid var(--ink);
+      padding: 22px 4%;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 20px;
-      padding: 20px 4vw;
-      border-top: 1px solid var(--ink);
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
     }
 
-    .footer-logo {
-      font-size: 22px;
+    .footer-brand {
+      font-family: var(--sans);
       font-weight: 700;
-      letter-spacing: -0.09em;
+      font-size: 18px;
+      letter-spacing: -0.07em;
     }
 
-    .footer-note {
-      color: var(--muted);
-      font-size: 9px;
+    .footer-dealer {
+      color: var(--red);
     }
 
-    [hidden] {
-      display: none !important;
+    /* IMAGE OVERLAY */
+
+    .image-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 55px 5vw 35px;
+      background: rgba(245, 242, 235, 0.97);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
     }
 
-    @media (max-width: 700px) {
-      .topbar {
-        flex-wrap: wrap;
-        gap: 16px;
-        padding: 16px 5vw;
+    .image-modal.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 4%;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 25px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+    }
+
+    .modal-close:hover {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+
+    .modal-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      gap: 15px;
+    }
+
+    .modal-image {
+      display: block;
+      max-width: 100%;
+      max-height: calc(100vh - 150px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      box-shadow: 0 8px 35px rgba(23, 23, 20, 0.07);
+    }
+
+    .modal-caption {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 20px;
+      width: min(100%, 800px);
+      font-size: 11px;
+    }
+
+    .modal-title {
+      margin: 0;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .modal-price {
+      font-family: var(--mono);
+      white-space: nowrap;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* TABLET */
+
+    @media (max-width: 800px) {
+      .product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 30px 12px;
       }
 
-      .nav-group {
-        gap: 13px;
+      .topbar {
+        padding: 0 3%;
+        gap: 10px;
+      }
+
+      .nav-left,
+      .nav-right {
+        gap: 12px;
+      }
+
+      .section {
+        padding-left: 3%;
+        padding-right: 3%;
+      }
+
+      .marquee-word {
+        padding: 0 15px;
+      }
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 520px) {
+      .topbar {
+        grid-template-columns: 1fr auto;
+        padding: 13px 4%;
+        row-gap: 12px;
+      }
+
+      .nav-left {
+        grid-column: 1 / -1;
+        justify-content: space-between;
+      }
+
+      .dealer-label {
+        grid-row: 2;
+        grid-column: 1;
+        text-align: left;
+      }
+
+      .nav-right {
+        grid-row: 2;
+        grid-column: 2;
+        gap: 12px;
       }
 
       .nav-link {
         font-size: 9px;
       }
 
-      .brand {
-        order: -1;
-        width: 100%;
+      .marquee {
+        padding-top: 27px;
       }
 
-      .topbar .nav-group {
-        flex: 1;
+      .marquee-word {
+        font-size: 18vw;
+        padding: 0 12px;
       }
 
-      .topbar .nav-group:last-child {
-        justify-content: flex-end;
+      .marquee-star {
+        font-size: 8vw;
+      }
+
+      .studio-descriptor {
+        padding: 19px 12px 35px;
+        font-size: 9px;
+      }
+
+      .section {
+        padding: 0 4% 60px;
+      }
+
+      .section-heading {
+        margin-bottom: 18px;
       }
 
       .product-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 26px 10px;
+        gap: 27px 10px;
       }
 
       .product-info {
         flex-direction: column;
         gap: 5px;
+        padding-top: 9px;
       }
 
       .product-title {
-        font-size: 12px;
+        font-size: 11px;
+      }
+
+      .product-description {
+        font-size: 10px;
       }
 
       .product-price {
         font-size: 10px;
       }
 
-      .collection-grid {
-        grid-template-columns: 1fr;
+      .zoom-hint {
+        opacity: 1;
+        transform: none;
+        font-size: 8px;
+        padding: 5px 6px;
       }
 
-      .collection-card {
-        min-height: 140px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      html {
-        scroll-behavior: auto;
+      .image-modal {
+        padding: 65px 4vw 28px;
       }
 
-      .marquee-track {
-        animation: none;
+      .modal-image {
+        max-width: 100%;
+        max-height: calc(100vh - 145px);
       }
 
-      .product-image {
-        transition: none;
+      .modal-caption {
+        gap: 12px;
+      }
+
+      .footer {
+        padding: 20px 4%;
       }
     }
   </style>
 </head>
 
 <body>
+  <!-- TOP NAVIGATION -->
   <header class="topbar">
-    <nav class="nav-group" aria-label="Main navigation">
+    <nav class="nav-left" aria-label="Main navigation">
       <a class="nav-link" href="#all-art">All Art</a>
       <a class="nav-link" href="#collections">Collections</a>
     </nav>
 
-    <a class="brand" href="#" aria-label="EMEJOTA home">
-      <span class="brand-tagline">Your local dealer</span>
-    </a>
+    <div class="dealer-label">Your local dealer</div>
 
-    <nav class="nav-group" aria-label="Additional navigation">
+    <nav class="nav-right" aria-label="Additional navigation">
       <a class="nav-link" href="#about">About</a>
       <a class="nav-link" href="#contact">Contact</a>
-      <a class="nav-link" href="#cart">Cart (0)</a>
+      <a class="nav-link" href="#cart">
+        Cart <span class="cart-count">(0)</span>
+      </a>
     </nav>
   </header>
 
+  <!-- MOVING EMEJOTA MARQUEE -->
   <div class="marquee" aria-label="EMEJOTA">
-    <div class="marquee-track" aria-hidden="true">
-      <div class="marquee-word">
-        <span>EMEJOTA</span><span class="marquee-star">✳</span>
-        <span>EMEJOTA</span><span class="marquee-star">✳</span>
-        <span>EMEJOTA</span><span class="marquee-star">✳</span>
-        <span>EMEJOTA</span><span class="marquee-star">✳</span>
+    <div class="marquee-track">
+      <div class="marquee-group" aria-hidden="true">
+        <span class="marquee-word">EMEJOTA</span>
+        <span class="marquee-star">✳</span>
+        <span class="marquee-word">EMEJOTA</span>
+        <span class="marquee-star">✳</span>
+        <span class="marquee-word">EMEJOTA</span>
+        <span class="marquee-star">✳</span>
+        <span class="marquee-word">EMEJOTA</span>
+        <span class="marquee-star">✳</span>
       </div>
-      <div class="marquee-word">
-        <span>EMEJOTA</span><span class="marquee-star">✳</span>
-        <span>EMEJOTA</span><span class="marquee-star">✳</span>
-        <span>EMEJOTA</span><span class="marquee-star">✳</span>
-        <span>EMEJOTA</span><span class="marquee-star">✳</span>
+
+      <div class="marquee-group" aria-hidden="true">
+        <span class="marquee-word">EMEJOTA</span>
+        <span class="marquee-star">✳</span>
+        <span class="marquee-word">EMEJOTA</span>
+        <span class="marquee-star">✳</span>
+        <span class="marquee-word">EMEJOTA</span>
+        <span class="marquee-star">✳</span>
+        <span class="marquee-word">EMEJOTA</span>
+        <span class="marquee-star">✳</span>
       </div>
     </div>
   </div>
 
-  <main>
-    <section class="intro">
-      <h1>Creative Design and Illustration</h1>
-    </section>
+  <div class="studio-descriptor">
+    Creative Design and Illustration
+  </div>
 
+  <!-- ALL ART -->
+  <main>
     <section class="section" id="all-art">
       <div class="section-heading">
-        <h2>All Art</h2>
-        <span id="product-count">All available pieces</span>
+        <h1>All Art</h1>
+        <span class="section-note" id="product-count">Loading pieces...</span>
       </div>
 
       <div class="product-grid" id="product-grid">
-        <p class="loading-state">Loading all art...</p>
+        <div class="empty-state">
+          <strong>One sec...</strong>
+          Loading the good stuff.
+        </div>
       </div>
     </section>
 
+    <!-- COLLECTIONS -->
     <section class="section" id="collections">
       <div class="section-heading">
         <h2>Collections</h2>
-        <span>Explore by collection</span>
       </div>
 
-      <div class="collection-grid" id="collection-grid">
-        <p class="empty-state">Collections are coming soon.</p>
+      <div class="placeholder-section">
+        <div class="placeholder-copy">
+          A little something for later.
+        </div>
       </div>
     </section>
 
-    <section class="simple-section" id="about">
-      <h2>About</h2>
-      <p>More about EMEJOTA coming soon.</p>
+    <!-- ABOUT -->
+    <section class="section" id="about">
+      <div class="section-heading">
+        <h2>About</h2>
+      </div>
+
+      <div class="about-copy">
+        An independent creative space for art, ideas and other good things.
+      </div>
     </section>
 
-    <section class="simple-section" id="contact">
-      <h2>Contact</h2>
-      <p><a href="mailto:hello@emejota.com">hello@emejota.com</a></p>
+    <!-- CONTACT -->
+    <section class="section" id="contact">
+      <div class="section-heading">
+        <h2>Contact</h2>
+      </div>
+
+      <div class="placeholder-copy">
+        Have something in mind?
+        <a class="contact-link" href="mailto:hello@emejota.com">
+          &nbsp;Say hello.
+        </a>
+      </div>
     </section>
 
-    <section class="simple-section" id="cart">
-      <h2>Cart</h2>
-      <p>Your cart will live here soon.</p>
+    <!-- CART PLACEHOLDER -->
+    <section class="section" id="cart">
+      <div class="section-heading">
+        <h2>Cart</h2>
+      </div>
+
+      <div class="cart-placeholder">
+        Your cart is taking a little break. Shopping functionality coming soon.
+      </div>
     </section>
   </main>
 
-  <footer>
-    <span class="footer-logo">EMEJOTA</span>
-    <span class="footer-note">Your local dealer</span>
+  <!-- LARGE IMAGE OVERLAY -->
+  <div
+    class="image-modal"
+    id="image-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Product image"
+    aria-hidden="true"
+  >
+    <button
+      class="modal-close"
+      id="modal-close"
+      type="button"
+      aria-label="Close enlarged image"
+    >
+      ×
+    </button>
+
+    <div class="modal-content">
+      <img class="modal-image" id="modal-image" src="" alt="" />
+
+      <div class="modal-caption">
+        <p class="modal-title" id="modal-title"></p>
+        <span class="modal-price" id="modal-price"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span class="footer-brand">EMEJOTA</span>
+    <span class="footer-dealer">Your local dealer</span>
   </footer>
 
+  <!-- SUPABASE -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
+    /*
+      IMPORTANT:
+      Replace the placeholder below with your existing Supabase
+      publishable/anon key. Never use your service_role key here.
+    */
+
     const SUPABASE_URL = "https://hdehwxlwvafnbthosabl.supabase.co";
     const SUPABASE_KEY = "sb_publishable_vbdPL00ZnIYMrHXQlVAvrg_KupjLMrc";
 
     const productGrid = document.getElementById("product-grid");
     const productCount = document.getElementById("product-count");
 
-    const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+    const imageModal = document.getElementById("image-modal");
+    const modalImage = document.getElementById("modal-image");
+    const modalTitle = document.getElementById("modal-title");
+    const modalPrice = document.getElementById("modal-price");
+    const modalClose = document.getElementById("modal-close");
 
-    const money = new Intl.NumberFormat("es-DO", {
-      style: "currency",
-      currency: "DOP"
-    });
+    let previouslyFocusedElement = null;
 
-    function escapeHTML(value = "") {
-      return String(value).replace(/[&<>"']/g, character => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      })[character]);
-    }
+    const hasValidConfig =
+      SUPABASE_KEY &&
+      SUPABASE_KEY !== "sb_publishable_vbdPL00ZnIYMrHXQlVAvrg_KupjLMrc";
 
-    function shuffle(items) {
+    const supabase = hasValidConfig
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+      : null;
+
+    // Shuffle the products so the gallery order changes on refresh.
+    function shuffleArray(items) {
       const shuffled = [...items];
 
       for (let i = shuffled.length - 1; i > 0; i--) {
@@ -523,70 +805,207 @@
       return shuffled;
     }
 
-    function renderProducts(products) {
-      if (!products || products.length === 0) {
-        productCount.textContent = "0 pieces";
+    // Format prices without assuming a particular currency.
+    function formatPrice(price) {
+      const amount = Number(price);
+
+      if (!Number.isFinite(amount)) {
+        return "";
+      }
+
+      return new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(amount);
+    }
+
+    // Create elements safely without injecting product text as HTML.
+    function createProductCard(product) {
+      const card = document.createElement("article");
+      card.className = "product-card";
+
+      const imageButton = document.createElement("button");
+      imageButton.className = "product-image-button";
+      imageButton.type = "button";
+      imageButton.setAttribute(
+        "aria-label",
+        `View ${product.title} enlarged`
+      );
+
+      const image = document.createElement("img");
+      image.className = "product-image";
+      image.src = product.image_url;
+      image.alt = product.title || "EMEJOTA artwork";
+      image.loading = "lazy";
+      image.decoding = "async";
+
+      image.addEventListener("error", () => {
+        imageButton.style.background = "#e5e0d6";
+        image.style.visibility = "hidden";
+      });
+
+      const zoomHint = document.createElement("span");
+      zoomHint.className = "zoom-hint";
+      zoomHint.textContent = "View +";
+
+      imageButton.append(image, zoomHint);
+
+      imageButton.addEventListener("click", () => {
+        openImageModal(product, imageButton);
+      });
+
+      const info = document.createElement("div");
+      info.className = "product-info";
+
+      const textBlock = document.createElement("div");
+
+      const title = document.createElement("h3");
+      title.className = "product-title";
+      title.textContent = product.title || "Untitled";
+
+      textBlock.appendChild(title);
+
+      if (product.description) {
+        const description = document.createElement("p");
+        description.className = "product-description";
+        description.textContent = product.description;
+        textBlock.appendChild(description);
+      }
+
+      const price = document.createElement("span");
+      price.className = "product-price";
+      price.textContent = formatPrice(product.price);
+
+      info.append(textBlock, price);
+      card.append(imageButton, info);
+
+      return card;
+    }
+
+    // Open the image on top of the gallery.
+    function openImageModal(product, triggerElement) {
+      if (!product.image_url) {
+        return;
+      }
+
+      previouslyFocusedElement = triggerElement;
+
+      modalImage.src = product.image_url;
+      modalImage.alt = product.title || "EMEJOTA artwork";
+      modalTitle.textContent = product.title || "Untitled";
+
+      const formattedPrice = formatPrice(product.price);
+      modalPrice.textContent = formattedPrice;
+
+      imageModal.classList.add("is-open");
+      imageModal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+
+      modalClose.focus();
+    }
+
+    // Close the overlay and return focus to the product that opened it.
+    function closeImageModal() {
+      if (!imageModal.classList.contains("is-open")) {
+        return;
+      }
+
+      imageModal.classList.remove("is-open");
+      imageModal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+
+      modalImage.removeAttribute("src");
+
+      if (previouslyFocusedElement) {
+        previouslyFocusedElement.focus();
+      }
+    }
+
+    modalClose.addEventListener("click", closeImageModal);
+
+    // Clicking the backdrop closes the image; clicking the image doesn't.
+    imageModal.addEventListener("click", (event) => {
+      if (event.target === imageModal) {
+        closeImageModal();
+      }
+    });
+
+    // Escape closes the overlay.
+    document.addEventListener("keydown", (event) => {
+      if (
+        event.key === "Escape" &&
+        imageModal.classList.contains("is-open")
+      ) {
+        closeImageModal();
+      }
+    });
+
+    async function loadProducts() {
+      if (!supabase) {
+        productCount.textContent = "Configuration needed";
         productGrid.innerHTML = `
-          <p class="empty-state">
-            Nothing here just yet. Check back soon.
-          </p>
+          <div class="empty-state">
+            <strong>Almost there.</strong>
+            Add your Supabase publishable key in the index.html configuration.
+          </div>
         `;
         return;
       }
 
-      const shuffledProducts = shuffle(products);
-
-      productCount.textContent =
-        `${shuffledProducts.length} ${shuffledProducts.length === 1 ? "piece" : "pieces"}`;
-
-      productGrid.innerHTML = shuffledProducts.map(product => {
-        const image = product.image_url
-          ? `<img
-               class="product-image"
-               src="${escapeHTML(product.image_url)}"
-               alt="${escapeHTML(product.title)}"
-               loading="lazy"
-             >`
-          : "";
-
-        return `
-          <article class="product-card">
-            <div class="product-image-wrap">
-              ${image}
-            </div>
-            <div class="product-info">
-              <div>
-                <h3 class="product-title">${escapeHTML(product.title)}</h3>
-                ${product.description
-                  ? `<p class="product-description">${escapeHTML(product.description)}</p>`
-                  : ""}
-              </div>
-              <span class="product-price">
-                ${money.format(Number(product.price) || 0)}
-              </span>
-            </div>
-          </article>
-        `;
-      }).join("");
-    }
-
-    async function loadProducts() {
       try {
-        const { data, error } = await supabaseClient
+        const { data, error } = await supabase
           .from("products")
-          .select("id, title, description, price, image_url, is_published, created_at")
+          .select(
+            "id, title, description, price, image_url, is_published, created_at"
+          )
           .eq("is_published", true);
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
-        renderProducts(data);
+        const products = shuffleArray(
+          (data || []).filter(
+            (product) => product.image_url && product.image_url.trim() !== ""
+          )
+        );
+
+        productGrid.replaceChildren();
+
+        if (products.length === 0) {
+          productCount.textContent = "0 pieces";
+
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
+
+          const heading = document.createElement("strong");
+          heading.textContent = "Nothing on display just yet.";
+
+          const message = document.createElement("span");
+          message.textContent =
+            "Published pieces will show up here when they're ready.";
+
+          empty.append(heading, message);
+          productGrid.appendChild(empty);
+          return;
+        }
+
+        productCount.textContent =
+          `${products.length} ${products.length === 1 ? "piece" : "pieces"}`;
+
+        const cards = products.map(createProductCard);
+        productGrid.append(...cards);
+
       } catch (error) {
         console.error("Could not load products:", error);
 
+        productCount.textContent = "Please try again";
+
         productGrid.innerHTML = `
-          <p class="empty-state">
-            We couldn't load the art right now. Please try again later.
-          </p>
+          <div class="empty-state">
+            <strong>The gallery is taking a little break.</strong>
+            Please refresh the page in a moment.
+          </div>
         `;
       }
     }
