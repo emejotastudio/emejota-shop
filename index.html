@@ -93,16 +93,10 @@
       white-space: nowrap;
     }
 
-    .brand-name {
-      font-size: clamp(20px, 2.3vw, 29px);
-      font-weight: 700;
-      letter-spacing: -0.09em;
-      line-height: 1;
-    }
-
     .brand-tagline {
       color: var(--red);
-      font-size: 9px;
+      font-size: 10px;
+      font-weight: 400;
     }
 
     .marquee {
@@ -150,36 +144,18 @@
     }
 
     .intro {
-      padding: 25px 4vw 38px;
-    }
-
-    .section-label {
-      color: var(--muted);
-    }
-
-    .intro-line {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 20px;
+      padding: 22px 4vw 36px;
+      text-align: center;
     }
 
     .intro h1 {
       margin: 0;
-      font-size: clamp(34px, 6vw, 78px);
-      line-height: 0.95;
-      letter-spacing: -0.075em;
-      font-weight: 500;
-    }
-
-    .intro-note {
-      max-width: 200px;
-      margin: 0;
       font-family: "DM Mono", monospace;
       font-size: 11px;
-      line-height: 1.6;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      line-height: 1.5;
       text-transform: uppercase;
-      color: var(--muted);
     }
 
     .section {
@@ -382,11 +358,6 @@
         justify-content: flex-end;
       }
 
-      .intro-line {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
       .product-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 26px 10px;
@@ -438,7 +409,6 @@
     </nav>
 
     <a class="brand" href="#" aria-label="EMEJOTA home">
-      <span class="brand-name">EMEJOTA</span>
       <span class="brand-tagline">Your local dealer</span>
     </a>
 
@@ -468,10 +438,7 @@
 
   <main>
     <section class="intro">
-      <div class="intro-line">
-        <h1>Your local dealer.</h1>
-        <p class="intro-note">Art, objects & other things.<br>Picked, made and collected.</p>
-      </div>
+      <h1>Creative Design and Illustration</h1>
     </section>
 
     <section class="section" id="all-art">
@@ -492,9 +459,7 @@
       </div>
 
       <div class="collection-grid" id="collection-grid">
-        <p class="empty-state">
-          Collections are coming soon.
-        </p>
+        <p class="empty-state">Collections are coming soon.</p>
       </div>
     </section>
 
@@ -521,7 +486,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Replace this placeholder with your Supabase project URL and publishable key.
     const SUPABASE_URL = "https://hdehwxlwvafnbthosabl.supabase.co";
     const SUPABASE_KEY = "sb_publishable_vbdPL00ZnIYMrHXQlVAvrg_KupjLMrc";
 
@@ -570,7 +534,6 @@
         return;
       }
 
-      // All Art: show every published piece in a shuffled order.
       const shuffledProducts = shuffle(products);
 
       productCount.textContent =
